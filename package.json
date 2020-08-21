@@ -1,0 +1,11 @@
+{
+  "name": "eleventy-plugin-react",
+  "version": "1.0.0",
+  "description": "A plugin that allows you to use React as a templating language for Eleventy",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kai Cataldo <kai@kaicataldo.com>",
+  "license": "MIT"
+}
