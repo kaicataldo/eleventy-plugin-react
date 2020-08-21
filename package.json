@@ -2,20 +2,24 @@
   "name": "eleventy-plugin-react",
   "version": "1.0.0",
   "description": "A plugin that allows you to use React as a templating language for Eleventy",
-  "main": "index.js",
+  "author": "Kai Cataldo <kai@kaicataldo.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "main": "lib/index.js",
   "scripts": {
     "lint": "eslint .",
     "format": "prettier --write ."
   },
-  "author": "Kai Cataldo <kai@kaicataldo.com>",
-  "license": "MIT",
   "peerDependencies": {
-    "@11ty/eleventy": ">=0.11.0"
+    "@11ty/eleventy": ">=0.11.0",
+    "@babel/core": ">=7.11.4",
+    "react": ">=16.13.1",
+    "react-dom": ">=16.13.1"
   },
   "dependencies": {
-    "@babel/core": "^7.11.4",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "pirates": "^4.0.1"
   },
   "devDependencies": {
     "eslint": "^7.7.0",
