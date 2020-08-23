@@ -10,7 +10,7 @@ const generateBabelConfig = require("./lib/utils/babelConfig");
 const { loadModuleFromCWD } = require("./lib/utils/moduleUtils");
 
 module.exports = function eleventyPluginReact(eleventyConfig) {
-  const revertHook = addHook(
+  addHook(
     (code, filename) => {
       const { code: compiledCode } = babel.transform(
         `${code}\nif (exports.default) exports.default.__modulePath = "${filename}"`,
@@ -29,6 +29,21 @@ module.exports = function eleventyPluginReact(eleventyConfig) {
     }
   );
 
+  function createPage(content) {
+    return `
+      <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+        </head>
+        <body>
+            <div>${content}</div>
+            <script src="./assets/hydrated-components.js"></script>
+        </body>
+        </html>
+    `.trim();
+  }
+
   const extensionOptions = {
     // The module is loaded in the compile method below.
     read: false,
@@ -41,10 +56,14 @@ module.exports = function eleventyPluginReact(eleventyConfig) {
         const componentModule = loadModuleFromCWD(inputPath).default;
         const Component = React.createElement(componentModule, { data }, null);
         const html = ReactDOM.renderToString(Component);
-        // Revert module hook after each page is rendered in case this a long-lived process.
-        revertHook();
-        await bundleClientAssets();
-        return html;
+
+        try {
+          await bundleClientAssets();
+        } catch (e) {
+          console.error(`Could not bundle client assets. Error: ${e.message}`);
+        }
+
+        return createPage(html);
       };
     },
   };
