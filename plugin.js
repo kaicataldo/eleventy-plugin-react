@@ -29,7 +29,7 @@ module.exports = function eleventyPluginReact(eleventyConfig) {
     }
   );
 
-  function createPage(content) {
+  function createPage(content, hash) {
     return `
       <!DOCTYPE html>
         <html>
@@ -38,7 +38,7 @@ module.exports = function eleventyPluginReact(eleventyConfig) {
         </head>
         <body>
             <div>${content}</div>
-            <script src="./assets/hydrated-components.js"></script>
+            <script src="./assets/hydrated-components-${hash}.js"></script>
         </body>
         </html>
     `.trim();
@@ -57,13 +57,14 @@ module.exports = function eleventyPluginReact(eleventyConfig) {
         const Component = React.createElement(componentModule, { data }, null);
         const html = ReactDOM.renderToString(Component);
 
+        let hash;
         try {
-          await bundleClientAssets();
+          hash = await bundleClientAssets();
         } catch (e) {
           console.error(`Could not bundle client assets. Error: ${e.message}`);
         }
 
-        return createPage(html);
+        return createPage(html, hash);
       };
     },
   };
