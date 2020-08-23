@@ -11,9 +11,9 @@
   "files": [
     "README.md",
     "LICENSE",
+    "lib",
     "plugin.js",
-    "withHydration.js",
-    "lib"
+    "utils.js"
   ],
   "scripts": {
     "lint": "eslint .",
