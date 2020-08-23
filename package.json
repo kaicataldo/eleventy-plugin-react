@@ -7,7 +7,14 @@
   "engines": {
     "node": ">=12.0.0"
   },
-  "main": "lib/index.js",
+  "main": "plugin.js",
+  "files": [
+    "README.md",
+    "LICENSE",
+    "plugin.js",
+    "withHydration.js",
+    "lib"
+  ],
   "scripts": {
     "lint": "eslint .",
     "format": "prettier --write ."
@@ -19,10 +26,12 @@
     "@babel/core": "^7.11.4",
     "@babel/preset-env": "^7.11.0",
     "@babel/preset-react": "^7.10.4",
+    "babel-loader": "^8.1.0",
     "pirates": "^4.0.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "uuid": "^8.3.0"
+    "webpack": "^4.44.1",
+    "webpack-virtual-modules": "^0.2.2"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.11.4",
