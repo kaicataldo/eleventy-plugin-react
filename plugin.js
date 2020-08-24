@@ -5,6 +5,7 @@ const React = require("react");
 const ReactDOM = require("react-dom/server");
 const babel = require("@babel/core");
 const { bundleClientAssets } = require("./lib/clientBundler");
+const hydrationCache = require("./lib/hydrationCache");
 const { PACKAGE_ROOT, SUPPORTED_EXTENSIONS } = require("./lib/utils/constants");
 const generateBabelConfig = require("./lib/utils/babelConfig");
 const { loadModuleFromCWD } = require("./lib/utils/moduleUtils");
@@ -30,7 +31,7 @@ function setupBabelHook() {
   );
 }
 
-function createPage(content, hash) {
+function createPage(content, hasComponents, hash) {
   return `
       <!DOCTYPE html>
         <html>
@@ -39,7 +40,11 @@ function createPage(content, hash) {
         </head>
         <body>
             <div>${content}</div>
-            <script src="./assets/hydrated-components-${hash}.js"></script>
+            ${
+              hasComponents
+                ? `<script src="./assets/hydrated-components-${hash}.js"></script>`
+                : ""
+            }
         </body>
         </html>
     `.trim();
@@ -58,6 +63,7 @@ module.exports = function eleventyPluginReact(eleventyConfig) {
         const componentModule = loadModuleFromCWD(inputPath).default;
         const Component = React.createElement(componentModule, { data }, null);
         const html = ReactDOM.renderToString(Component);
+        const hasComponents = hydrationCache.hasComponents();
 
         let hash;
         try {
@@ -66,7 +72,7 @@ module.exports = function eleventyPluginReact(eleventyConfig) {
           console.error(`Could not bundle client assets. Error: ${e.message}`);
         }
 
-        return createPage(html, hash);
+        return createPage(html, hasComponents, hash);
       };
     },
   };
