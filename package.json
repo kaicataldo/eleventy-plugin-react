@@ -9,8 +9,9 @@
   },
   "main": "plugin.js",
   "files": [
-    "README.md",
     "LICENSE",
+    "README.md",
+    "assets",
     "lib",
     "plugin.js",
     "utils.js"

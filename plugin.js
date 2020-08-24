@@ -9,8 +9,8 @@ const { PACKAGE_ROOT, SUPPORTED_EXTENSIONS } = require("./lib/utils/constants");
 const generateBabelConfig = require("./lib/utils/babelConfig");
 const { loadModuleFromCWD } = require("./lib/utils/moduleUtils");
 
-module.exports = function eleventyPluginReact(eleventyConfig) {
-  addHook(
+function setupBabelHook() {
+  return addHook(
     (code, filename) => {
       const { code: compiledCode } = babel.transform(
         `${code}\nif (exports.default) exports.default.__modulePath = "${filename}"`,
@@ -28,9 +28,10 @@ module.exports = function eleventyPluginReact(eleventyConfig) {
       ignoreNodeModules: true,
     }
   );
+}
 
-  function createPage(content, hash) {
-    return `
+function createPage(content, hash) {
+  return `
       <!DOCTYPE html>
         <html>
         <head>
@@ -42,8 +43,9 @@ module.exports = function eleventyPluginReact(eleventyConfig) {
         </body>
         </html>
     `.trim();
-  }
+}
 
+module.exports = function eleventyPluginReact(eleventyConfig) {
   const extensionOptions = {
     // The module is loaded in the compile method below.
     read: false,
@@ -73,4 +75,6 @@ module.exports = function eleventyPluginReact(eleventyConfig) {
     eleventyConfig.addTemplateFormats(ext);
     eleventyConfig.addExtension(ext, extensionOptions);
   }
+
+  setupBabelHook();
 };
