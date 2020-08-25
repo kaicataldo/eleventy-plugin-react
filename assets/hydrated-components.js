@@ -15,4 +15,4 @@ for (const placeholder of placeholders) {
   ReactDOM.hydrate(<Component {...props} />, renderRoot);
 }
 
-delete window._hydrationData;
+delete window.__hydrationData;
