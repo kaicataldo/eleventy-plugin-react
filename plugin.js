@@ -9,6 +9,7 @@ const hydrationCache = require("./lib/hydrationCache");
 const { PACKAGE_ROOT, SUPPORTED_EXTENSIONS } = require("./lib/utils/constants");
 const generateBabelConfig = require("./lib/utils/babelConfig");
 const { loadModuleFromCWD } = require("./lib/utils/moduleUtils");
+const dedent = require("dedent");
 
 function setupBabelHook() {
   return addHook(
@@ -19,7 +20,6 @@ function setupBabelHook() {
         babelrc: false,
         ...generateBabelConfig(),
       });
-
       return `${compiledCode}\nif (exports.default) exports.default.__modulePath = "${filename}"`;
     },
     {
@@ -30,22 +30,22 @@ function setupBabelHook() {
 }
 
 function createPage(content, hasComponents, hash) {
-  return `
-      <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-        </head>
-        <body>
-            <div>${content}</div>
-            ${
-              hasComponents
-                ? `<script src="./assets/hydrated-components-${hash}.js"></script>`
-                : ""
-            }
-        </body>
-        </html>
-    `.trim();
+  return dedent(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+    </head>
+    <body>
+      <div>${content}</div>
+      ${
+        hasComponents
+          ? `<script src="./assets/hydrated-components-${hash}.js"></script>`
+          : ""
+      }
+    </body>
+    </html>
+  `).trim();
 }
 
 module.exports = function eleventyPluginReact(eleventyConfig) {
