@@ -13,16 +13,14 @@ const { loadModuleFromCWD } = require("./lib/utils/moduleUtils");
 function setupBabelHook() {
   return addHook(
     (code, filename) => {
-      const { code: compiledCode } = babel.transform(
-        `${code}\nif (exports.default) exports.default.__modulePath = "${filename}"`,
-        {
-          filename,
-          cwd: PACKAGE_ROOT,
-          babelrc: false,
-          ...generateBabelConfig(),
-        }
-      );
-      return compiledCode;
+      const { code: compiledCode } = babel.transform(code, {
+        filename,
+        cwd: PACKAGE_ROOT,
+        babelrc: false,
+        ...generateBabelConfig(),
+      });
+
+      return `${compiledCode}\nif (exports.default) exports.default.__modulePath = "${filename}"`;
     },
     {
       exts: SUPPORTED_EXTENSIONS.map((ext) => `.${ext}`),
