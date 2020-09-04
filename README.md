@@ -1,5 +1,8 @@
 # eleventy-plugin-react
 
+[![npm](https://img.shields.io/npm/v/eleventy-plugin-react.svg?style=flat-square)](https://www.npmjs.com/package/eleventy-plugin-react/)
+[![node](https://img.shields.io/node/v/eleventy-plugin-react.svg?style=flat-square)](https://nodejs.org/en/)
+
 A plugin that allows you to use React as a templating language for Eleventy. This is currently experimental, and relies on unstable Eleventy APIs.
 
 ## Installation
@@ -66,5 +69,5 @@ You can now run Eleventy to build your site!
 
 This was started as a proof of concept, and I would love to improve this package. Things that I think would be beneficial to explore:
 
-- Being able to write interactive components and hydrate them on the client-side. This should not include the static components in the bundle, though, because that's a lot of unnecessary bloat. You can see my work so far on [this branch](https://github.com/kaicataldo/eleventy-plugin-react/tree/withHydration). The current iteration has some limitations (the default export must either be the Component that is going to be hydrated or the higher order component using `withHydration` so that we know which files to include), and I've love to find a less brittle solution.
+- Being able to mix in interactive components and have it all work automagically (hydrating only those components marked for hydration). This should not include the static components in the bundle, though, because that's a lot of unnecessary bloat. You can see my work so far on [this branch](https://github.com/kaicataldo/eleventy-plugin-react/tree/withHydration). The current iteration has some limitations (the default export must either be the Component that is going to be hydrated or the higher order component using `withHydration` so that we know which files to include), and I've love to find a less brittle solution.
 - Extraction and inclusion of styles when using CSS-in-JS libraries.
