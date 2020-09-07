@@ -89,7 +89,7 @@ ELEVENTY_EXPERIMENTAL=true npx @11ty/eleventy
 }
 ```
 
-`outputPath` is the directory path for the outputted bundle of hydrated client-side assets. Defaults to `path.resolve(process.cwd(), "_site/assets")`.
+`outputDir` is the directory path for the outputted bundle of hydrated client-side assets. Defaults to `path.resolve(process.cwd(), "_site/assets")`.
 
 ### `postProcess`
 
@@ -109,7 +109,7 @@ eleventyConfig.addPlugin(eleventyReact, {
     chrome: "58",
     ie: "11",
   },
-  outputPath: path.resolve(process.cwd(), "_site/assets/js"),
+  outputDir: path.resolve(process.cwd(), "_site/assets/js"),
   async postProcess(html) {
     try {
       const transformedHtml = await extractAndInsertCritialStyles(html);
