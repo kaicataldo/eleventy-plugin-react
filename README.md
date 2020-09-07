@@ -112,10 +112,13 @@ eleventyConfig.addPlugin(eleventyReact, {
   outputDir: path.resolve(process.cwd(), "_site/assets/js"),
   async postProcess(html) {
     try {
+      // Try to extract and inline critical styles into head.
       const transformedHtml = await extractAndInsertCritialStyles(html);
       return transformedHtml;
     } catch (e) {
-      console.error("Extraction of critical styles failed");
+      // Fall back to original html if unsuccessful.
+      console.error("Extraction of critical styles failed.");
+      return html;
     }
   },
 });
