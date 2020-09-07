@@ -161,5 +161,4 @@ This was started as a proof of concept, and I would love to improve this package
 - Tests
 - Being able to provide your own Babel config/versions
 - Extraction and inclusion of styles when using CSS-in-JS libraries - post-render hook so as not to lock into a specific implementation, maybe?
-- Typescript support
-- 
+- TypeScript support
