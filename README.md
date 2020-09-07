@@ -69,6 +69,58 @@ ELEVENTY_EXPERIMENTAL=true npx @11ty/eleventy
 
 **Note**: Since this plugin currently relies on experimental Eleventy APIs, running the build requires using the `ELEVENTY_EXPERIMENTAL=true` CLI flag.
 
+## Options
+
+### `targets`
+
+```ts
+{
+  target: string | Object;
+}
+```
+
+`targets` describes the environments for which the bundle of hydrated client-side assets should be compiled. This is passed directly to `@babel/preset-env` (see the documentation [here](https://babeljs.io/docs/en/babel-preset-env#targets).
+
+### `outputDir`
+
+```ts
+{
+  outputDir: string;
+}
+```
+
+`outputPath` is the directory path for the outputted bundle of hydrated client-side assets. Defaults to `path.resolve(process.cwd(), "_site/assets")`.
+
+### `postProcess`
+
+```ts
+{
+  postProcess: (html: string) => string | async (html: string) => string;
+}
+```
+
+`postProcess` is a function (both synchronous and asynchronous functions are supported) that is called after server-side rendering has completed. This hook serves as a way to transform the rendered output before it is written to disk (extracting critical styles and inserting them into the head, for instance). The string (or `Promise` resolving to a string) that is returned will be written to disk.
+
+### Example usage
+
+```js
+eleventyConfig.addPlugin(eleventyReact, {
+  targets: {
+    chrome: "58",
+    ie: "11",
+  },
+  outputPath: path.resolve(process.cwd(), "_site/assets/js"),
+  async postProcess(html) {
+    try {
+      const transformedHtml = await extractAndInsertCritialStyles(html);
+      return transformedHtml;
+    } catch (e) {
+      console.error("Extraction of critical styles failed");
+    }
+  },
+});
+```
+
 ## Interactive components
 
 The plugin includes a `withHydration` higher order component utility that marks a component for hydration, bundles the component, and inserts a script into the `body` of the rendered HTML that hyrates the component in the client.
