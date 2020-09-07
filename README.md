@@ -79,7 +79,7 @@ ELEVENTY_EXPERIMENTAL=true npx @11ty/eleventy
 }
 ```
 
-`targets` describes the environments for which the bundle of hydrated client-side assets should be compiled. This is passed directly to `@babel/preset-env` (see the documentation [here](https://babeljs.io/docs/en/babel-preset-env#targets).
+`targets` describes the environments for which the bundle of hydrated client-side assets should be compiled. This is passed directly to `@babel/preset-env` (see the documentation [here](https://babeljs.io/docs/en/babel-preset-env#targets)).
 
 ### `outputDir`
 
@@ -212,5 +212,4 @@ This was started as a proof of concept, and I would love to improve this package
 
 - Tests
 - Being able to provide your own Babel config/versions
-- Extraction and inclusion of styles when using CSS-in-JS libraries - post-render hook so as not to lock into a specific implementation, maybe?
 - TypeScript support
