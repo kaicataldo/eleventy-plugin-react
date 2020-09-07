@@ -126,7 +126,7 @@ eleventyConfig.addPlugin(eleventyReact, {
 
 ## Interactive components
 
-The plugin includes a `withHydration` higher order component utility that marks a component for hydration, bundles the component, and inserts a script into the `body` of the rendered HTML that hyrates the component in the client.
+The plugin includes a `withHydration` higher order component utility that marks a component for hydration, bundles the component, and inserts a script into the `body` of the rendered HTML that hydrates the component in the client.
 
 Some important notes about `withHydration`:
 
