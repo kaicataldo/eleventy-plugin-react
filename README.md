@@ -59,6 +59,16 @@ export default function IndexPage(props) {
 
 Data for each page is passed as props to the entrypoint page component. You can learn more about using data in Eleventy [here](https://www.11ty.dev/docs/data/).
 
+You can now run Eleventy to build your site!
+
+```sh
+# Requires ELEVENTY_EXPERIMENTAL flag to run
+
+ELEVENTY_EXPERIMENTAL=true npx @11ty/eleventy
+```
+
+**Note**: Since this plugin currently relies on experimental Eleventy APIs, running the build requires using the `ELEVENTY_EXPERIMENTAL=true` CLI flag.
+
 ## Interactive components
 
 The plugin includes a `withHydration` higher order component utility that marks a component for hydration, bundles the component, and inserts a script into the `body` of the rendered HTML that hyrates the component in the client.
@@ -144,15 +154,7 @@ export default function IndexPage(props) {
 }
 ```
 
-```sh
-# Requires ELEVENTY_EXPERIMENTAL flag to run
-
-ELEVENTY_EXPERIMENTAL=true npx @11ty/eleventy
-```
-
-You can now run Eleventy to build your site!
-
-**Note**: Since this plugin currently relies on experimental Eleventy APIs, running the build requires using the `ELEVENTY_EXPERIMENTAL=true` CLI flag.
+## Further improvements
 
 This was started as a proof of concept, and I would love to improve this package. Things that I think would be beneficial to explore:
 
