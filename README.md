@@ -96,6 +96,7 @@ function Counter({ initialCount }) {
 }
 
 // The component can be wrapped in the withHydration higher order component and exported.
+// Note that it must be the default export.
 export default withHydration(Counter);
 ```
 
@@ -112,6 +113,8 @@ function Counter2({ initialCount }) {
   );
 }
 
+// The component can be exported and then wrapped in the withHydration higher order component in
+// the parent component. Note that it must be the default export.
 export default Counter2;
 ```
 
@@ -127,7 +130,7 @@ export default function IndexPage(props) {
   // Only hydrate the Counter2 component on the home page.
   // Counter2 is the default export in the module it's defined in,
   // so we can hydrate it conditionally in the component that imports it.
-  const MaybeHydratedComponent2 =
+  const MaybeHydratedCounter2 =
     props.page.url === "/" ? withHydration(Counter2) : Counter2;
 
   return (
@@ -135,7 +138,7 @@ export default function IndexPage(props) {
       {/* Counter is wrapped and then exported */}
       <Counter initialCount={2} />
       {/* Counter2 is exported and then wrapped */}
-      <MaybeHydratedComponent2 />
+      <MaybeHydratedCounter2 />
     </PageLayout>
   );
 }
@@ -153,5 +156,6 @@ You can now run Eleventy to build your site!
 
 This was started as a proof of concept, and I would love to improve this package. Things that I think would be beneficial to explore:
 
+- Tests
 - Being able to provide your own Babel config/versions.
 - Extraction and inclusion of styles when using CSS-in-JS libraries.
