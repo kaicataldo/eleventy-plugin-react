@@ -7,16 +7,16 @@ A plugin that allows you to use React as a templating language for Eleventy. Thi
 
 ## Installation
 
-This plugin requires `react` and `react-dom` as peer dependencies to allow you to have control over which version of React you're using.
+This plugin requires `react`, `react-dom`, and `react-helmet` as peer dependencies to allow you to have control over which version of these packages you're using.
 
 ```sh
-npm install eleventy-plugin-react react react-dom
+npm install eleventy-plugin-react react react-dom react-helmet
 ```
 
 or
 
 ```sh
-yarn add eleventy-plugin-react react react-dom
+yarn add eleventy-plugin-react react react-dom react-helmet
 ```
 
 ## Usage
@@ -56,6 +56,8 @@ export default function IndexPage(props) {
   );
 }
 ```
+
+All the content will be rendered into the `body`. React Helmet can be used to alter the `head`.
 
 Data for each page is passed as props to the entrypoint page component. You can learn more about using data in Eleventy [here](https://www.11ty.dev/docs/data/).
 
@@ -136,12 +138,18 @@ Some important notes about `withHydration`:
 
 ```js
 import React from "react";
+import { Helmet } from "react-helmet";
 
 export default function PageLayout(props) {
   return (
-    <body>
-      <div>{props.children}</div>
-    </body>
+    <>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>My Title</title>
+        <link rel="canonical" href="http://mysite.com/example" />
+      </Helmet>
+      <div class="container">{props.children}</div>
+    </>
   );
 }
 ```

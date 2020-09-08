@@ -14,6 +14,11 @@ module.exports = {
     strict: "error",
     "node/no-unpublished-require": "off",
   },
+  settings: {
+    react: {
+      version: "detect",
+    },
+  },
   overrides: [
     {
       files: ["!assets/**/*"],
