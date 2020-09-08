@@ -11,6 +11,7 @@
   "files": [
     "LICENSE",
     "README.md",
+    "assets",
     "lib",
     "plugin.js",
     "utils.js"
