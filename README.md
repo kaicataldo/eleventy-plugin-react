@@ -222,5 +222,6 @@ export default function IndexPage(props) {
 This was started as a proof of concept, and I would love to improve this package. Things that I think would be beneficial to explore:
 
 - Tests
-- Being able to provide your own Babel config/versions
-- TypeScript support
+- Expose ability to modify underlying Webpack and Babel configs to allow for TypeScript, SCSS, etc. Potentially switch Babel to a peer dependency and treat it similarly to React.
+- Improve dev UX by using Babel/Webpack cache
+- Reduce load time by splitting out common dependencies into separate bundle so that they can be cached in the browser
