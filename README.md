@@ -122,15 +122,15 @@ function babelConfig({ isBrowser }) {
 }
 ```
 
-### `outputDir`
+### `assetsPath`
 
 ```ts
 {
-  outputDir: string;
+  assetsPath: string;
 }
 ```
 
-`outputDir` is the directory path for the outputted bundle of hydrated client-side assets. Defaults to `path.resolve(process.cwd(), "_site/assets")`.
+`assetsPath` is the path for the outputted bundle of hydrated client-side assets, relative to Eleventy's configured output directory. Defaults to `"/assets"`. By default, this means that the client-side bundles would be outputted to `_site/assets/`.
 
 ### `postProcess`
 
@@ -164,7 +164,7 @@ eleventyConfig.addPlugin(eleventyReact, {
       ],
     };
   },
-  outputDir: path.resolve(process.cwd(), "_site/assets/js"),
+  assetsPath: "/assets/js",
   async postProcess(html) {
     try {
       // Try to extract and inline critical styles into head.
