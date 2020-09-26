@@ -29,7 +29,29 @@ First, add the plugin to your config. The plugin will automatically compile any 
 const eleventyReact = require("eleventy-plugin-react");
 
 module.exports = function (eleventyConfig) {
-  eleventyConfig.addPlugin(eleventyReact);
+  eleventyConfig.addPlugin(eleventyReact, {
+    babelConfig({ isBrowser }) {
+      return {
+        presets: [
+          "@babel/preset-react",
+          [
+            "@babel/preset-env",
+            isBrowser
+              ? {
+                  modules: false,
+                  targets: "> 0.25%, not dead",
+                }
+              : {
+                  modules: "commonjs",
+                  targets: {
+                    node: process.versions.node,
+                  },
+                },
+          ],
+        ],
+      };
+    },
+  });
 
   return {
     dir: {
@@ -122,21 +144,21 @@ function babelConfig({ isBrowser }) {
 }
 ```
 
-### `assetsPath`
+### `assetsPath` (optional)
 
 ```ts
 {
-  assetsPath: string;
+  assetsPath?: string;
 }
 ```
 
 `assetsPath` is the path for the outputted bundle of hydrated client-side assets, relative to Eleventy's configured output directory. Defaults to `"/assets"`. By default, this means that the client-side bundles would be outputted to `_site/assets/`.
 
-### `postProcess`
+### `postProcess` (optional)
 
 ```ts
 {
-  postProcess: (html: string) => string | async (html: string) => string;
+  postProcess?: (html: string) => string | async (html: string) => string;
 }
 ```
 
@@ -152,14 +174,17 @@ eleventyConfig.addPlugin(eleventyReact, {
         "@babel/preset-react",
         [
           "@babel/preset-env",
-          {
-            modules: isBrowser ? false : "commonjs",
-            targets: isBrowser
-              ? "> 0.25%, not dead"
-              : {
+          isBrowser
+            ? {
+                modules: false,
+                targets: "> 0.25%, not dead",
+              }
+            : {
+                modules: "commonjs",
+                targets: {
                   node: process.versions.node,
                 },
-          },
+              },
         ],
       ],
     };
