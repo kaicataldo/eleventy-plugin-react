@@ -277,4 +277,4 @@ This was started as a proof of concept, and I would love to improve this package
 - Tests
 - Expose ability to modify underlying Webpack and Babel configs to allow for TypeScript, SCSS, etc.
 - Improve dev UX by using Babel/Webpack cache
-- Reduce load time by splitting out common dependencies into separate bundle so that they can be cached in the browser
+- Currently, the plugin runs Webpack once per page. We should be able to improve bundling speed by running Webpack once with multiple entrypoints/splitting out common chunks.
