@@ -7,16 +7,16 @@ A plugin that allows you to use React as a templating language for Eleventy. Thi
 
 ## Installation
 
-This plugin requires `react`, `react-dom`, and `react-helmet` as peer dependencies to allow you to have control over which version of these packages you're using.
+This plugin requires `react`, `react-dom`, `react-helmet`, `@babel/core`, and `babel-loader` as peer dependencies to allow you to have control over which version of these packages you're using.
 
 ```sh
-npm install eleventy-plugin-react react react-dom react-helmet
+npm install eleventy-plugin-react react react-dom react-helmet @babel/core babel-loader
 ```
 
 or
 
 ```sh
-yarn add eleventy-plugin-react react react-dom react-helmet
+yarn add eleventy-plugin-react react react-dom react-helmet @babel/core babel-loader
 ```
 
 ## Usage
@@ -73,15 +73,54 @@ ELEVENTY_EXPERIMENTAL=true npx @11ty/eleventy
 
 ## Options
 
-### `targets`
+### `babelConfig`
 
 ```ts
 {
-  target: string | Object;
+  babelConfig: (context: { clientBundle: boolean }) => Object;
 }
 ```
 
-`targets` describes the environments for which the bundle of hydrated client-side assets should be compiled. This is passed directly to `@babel/preset-env` (see the documentation [here](https://babeljs.io/docs/en/babel-preset-env#targets)).
+`babelConfig` is a function that returns a Babel configuration object to be used both for compiling during server-side rendering the the static markup as well as when bundling the hydrated components for the browser. This takes the place of using a standard Babel configuration file, and the available options can be found [here](https://babeljs.io/docs/en/options).
+
+The function is called with a `context` object that has the following signature:
+
+```ts
+{
+  // When `true`, the configuration is being used to build the client bundle.
+  // When `false`, it is being used to compile the code for server-side rendering.
+  clientBundle: boolean;
+}
+```
+
+There are a few gotchas when configuring Babel for server-side rendering as well as for the client:
+
+1. Compile to CommonJS when executing in a project that is not using ES Modules.
+1. `targets` should be set so that the code can be executed in the version of Node.js you're using. If this doesn't match the syntax supported in the target browsers, you can use the `isBrowser` property in the context object to configure it for both environments.
+
+```js
+function babelConfig({ isBrowser }) {
+  return {
+    presets: [
+      "@babel/preset-react",
+      [
+        "@babel/preset-env",
+        {
+          // Must be "commonjs" when not using ES Modules in Node.js.
+          modules: isBrowser ? false : "commonjs",
+          targets: isBrowser
+            ? "> 0.25%, not dead"
+            : {
+                // Ensure that the server-side rendered components can be executed
+                // in the current version of Node.js.
+                node: process.versions.node,
+              },
+        },
+      ],
+    ],
+  };
+}
+```
 
 ### `outputDir`
 
@@ -107,9 +146,23 @@ ELEVENTY_EXPERIMENTAL=true npx @11ty/eleventy
 
 ```js
 eleventyConfig.addPlugin(eleventyReact, {
-  targets: {
-    chrome: "58",
-    ie: "11",
+  babelConfig({ isBrowser }) {
+    return {
+      presets: [
+        "@babel/preset-react",
+        [
+          "@babel/preset-env",
+          {
+            modules: isBrowser ? false : "commonjs",
+            targets: isBrowser
+              ? "> 0.25%, not dead"
+              : {
+                  node: process.versions.node,
+                },
+          },
+        ],
+      ],
+    };
   },
   outputDir: path.resolve(process.cwd(), "_site/assets/js"),
   async postProcess(html) {
@@ -222,6 +275,6 @@ export default function IndexPage(props) {
 This was started as a proof of concept, and I would love to improve this package. Things that I think would be beneficial to explore:
 
 - Tests
-- Expose ability to modify underlying Webpack and Babel configs to allow for TypeScript, SCSS, etc. Potentially switch Babel to a peer dependency and treat it similarly to React.
+- Expose ability to modify underlying Webpack and Babel configs to allow for TypeScript, SCSS, etc.
 - Improve dev UX by using Babel/Webpack cache
 - Reduce load time by splitting out common dependencies into separate bundle so that they can be cached in the browser
