@@ -29,6 +29,7 @@
     "react-helmet": ">=6.1.0"
   },
   "dependencies": {
+    "dedent": "^0.7.0",
     "jsdom": "^16.4.0",
     "pirates": "^4.0.1",
     "webpack": "^4.44.1",
