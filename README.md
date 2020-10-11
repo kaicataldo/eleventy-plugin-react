@@ -30,13 +30,13 @@ const eleventyReact = require("eleventy-plugin-react");
 
 module.exports = function (eleventyConfig) {
   eleventyConfig.addPlugin(eleventyReact, {
-    babelConfig({ isBrowser }) {
+    babelConfig({ isClientBundle }) {
       return {
         presets: [
           "@babel/preset-react",
           [
             "@babel/preset-env",
-            isBrowser
+            isClientBundle
               ? {
                   modules: false,
                   targets: "> 0.25%, not dead",
@@ -111,17 +111,17 @@ The function is called with a `context` object that has the following signature:
 {
   // When `true`, the configuration is being used to build the client bundle.
   // When `false`, it is being used to compile the code for server-side rendering.
-  clientBundle: boolean;
+  isClientBundle: boolean;
 }
 ```
 
 There are a few gotchas when configuring Babel for server-side rendering as well as for the client:
 
 1. Compile to CommonJS when executing in a project that is not using ES Modules.
-1. `targets` should be set so that the code can be executed in the version of Node.js you're using. If this doesn't match the syntax supported in the target browsers, you can use the `isBrowser` property in the context object to configure it for both environments.
+1. `targets` should be set so that the code can be executed in the version of Node.js you're using. If this doesn't match the syntax supported in the target browsers, you can use the `isClientBundle` property in the context object to configure it for both environments.
 
 ```js
-function babelConfig({ isBrowser }) {
+function babelConfig({ isClientBundle }) {
   return {
     presets: [
       "@babel/preset-react",
@@ -129,8 +129,8 @@ function babelConfig({ isBrowser }) {
         "@babel/preset-env",
         {
           // Must be "commonjs" when not using ES Modules in Node.js.
-          modules: isBrowser ? false : "commonjs",
-          targets: isBrowser
+          modules: isClientBundle ? false : "commonjs",
+          targets: isClientBundle
             ? "> 0.25%, not dead"
             : {
                 // Ensure that the server-side rendered components can be executed
@@ -152,7 +152,7 @@ function babelConfig({ isBrowser }) {
 }
 ```
 
-`assetsPath` is the path for the outputted bundle of hydrated client-side assets, relative to Eleventy's configured output directory. Defaults to `"/assets"`. By default, this means that the client-side bundles would be outputted to `_site/assets/`.
+`assetsPath` is the path for the outputted bundle of hydrated client-side assets, relative to Eleventy's configured output directory. Defaults to `"/assets/"`. By default, this means that the client-side bundles would be outputted to `_site/assets/`.
 
 ### `postProcess` (optional)
 
@@ -168,13 +168,13 @@ function babelConfig({ isBrowser }) {
 
 ```js
 eleventyConfig.addPlugin(eleventyReact, {
-  babelConfig({ isBrowser }) {
+  babelConfig({ isClientBundle }) {
     return {
       presets: [
         "@babel/preset-react",
         [
           "@babel/preset-env",
-          isBrowser
+          isClientBundle
             ? {
                 modules: false,
                 targets: "> 0.25%, not dead",

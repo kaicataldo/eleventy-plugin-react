@@ -2,10 +2,11 @@
 
 module.exports = {
   parserOptions: {
-    ecmaVersion: 2020,
+    ecmaVersion: 2021,
     sourceType: "script",
   },
   env: {
+    es2021: true,
     node: true,
   },
   plugins: ["node"],
@@ -23,6 +24,9 @@ module.exports = {
     {
       files: ["!assets/**/*"],
       extends: ["plugin:node/recommended"],
+      rules: {
+        "node/no-unpublished-require": "off",
+      },
     },
     // Isomorphic modules
     {
