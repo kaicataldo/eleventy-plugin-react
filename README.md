@@ -7,16 +7,16 @@ A plugin that allows you to use React as a templating language for Eleventy. Thi
 
 ## Installation
 
-This plugin requires `react`, `react-dom`, `react-helmet`, `@babel/core`, and `babel-loader` as peer dependencies to allow you to have control over which version of these packages you're using.
+This plugin requires `react`, `react-dom`, `react-helmet`, `@babel/core`, `babel-loader`, `@babel/preset-react`, and `@babel/preset-env` as peer dependencies to allow you to have control over which version of these packages you're using.
 
 ```sh
-npm install eleventy-plugin-react react react-dom react-helmet @babel/core babel-loader
+npm install eleventy-plugin-react react react-dom react-helmet @babel/core babel-loader @babel/preset-react @babel/preset-env
 ```
 
 or
 
 ```sh
-yarn add eleventy-plugin-react react react-dom react-helmet @babel/core babel-loader
+yarn add eleventy-plugin-react react react-dom react-helmet @babel/core babel-loader @babel/preset-react @babel/preset-env
 ```
 
 ## Usage
