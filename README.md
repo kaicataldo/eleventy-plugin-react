@@ -7,16 +7,16 @@ A plugin that allows you to use React as a templating language for Eleventy. Thi
 
 ## Installation
 
-This plugin requires `react`, `react-dom`, `react-helmet`, `@babel/core`, `babel-loader`, `@babel/preset-react`, and `@babel/preset-env` as peer dependencies to allow you to have control over which version of these packages you're using.
+This plugin requires `react`, `react-dom`, `react-helmet`, `@babel/core`, `babel-loader`, `@babel/preset-react`, `@babel/preset-typescript`, and `@babel/preset-env` as peer dependencies to allow you to have control over which version of these packages you're using.
 
 ```sh
-npm install eleventy-plugin-react react react-dom react-helmet @babel/core babel-loader @babel/preset-react @babel/preset-env
+npm install eleventy-plugin-react react react-dom react-helmet @babel/core babel-loader @babel/preset-react @babel/preset-env @babel/preset-typescript
 ```
 
 or
 
 ```sh
-yarn add eleventy-plugin-react react react-dom react-helmet @babel/core babel-loader @babel/preset-react @babel/preset-env
+yarn add eleventy-plugin-react react react-dom react-helmet @babel/core babel-loader @babel/preset-react @babel/preset-env @babel/preset-typescript
 ```
 
 ## Usage
@@ -34,6 +34,7 @@ module.exports = function (eleventyConfig) {
       return {
         presets: [
           "@babel/preset-react",
+          "@babel/preset-typescript",
           [
             "@babel/preset-env",
             isClientBundle
