@@ -8,13 +8,13 @@ A plugin that allows you to use React as a templating language for Eleventy. Thi
 ## Installation
 
 ```sh
-npm install eleventy-plugin-react
+npm install eleventy-plugin-react @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript react react-dom react-helmet core-js@3 regenerator-runtime
 ```
 
 or
 
 ```sh
-yarn add eleventy-plugin-react
+yarn add eleventy-plugin-react @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript react react-dom react-helmet core-js@3 regenerator-runtime
 ```
 
 ## Usage
