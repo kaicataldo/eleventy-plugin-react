@@ -7,14 +7,16 @@ A plugin that allows you to use React as a templating language for Eleventy. Thi
 
 ## Installation
 
+This plugin requires `react`, `react-dom`, `react-helmet`, `@babel/core`, `babel-loader`, `@babel/preset-react`, and `@babel/preset-env` as peer dependencies to allow you to have control over which version of these packages you're using.
+
 ```sh
-npm install eleventy-plugin-react @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript react react-dom react-helmet core-js@3 regenerator-runtime
+npm install eleventy-plugin-react react react-dom react-helmet @babel/core babel-loader @babel/preset-react @babel/preset-env
 ```
 
 or
 
 ```sh
-yarn add eleventy-plugin-react @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript react react-dom react-helmet core-js@3 regenerator-runtime
+yarn add eleventy-plugin-react react react-dom react-helmet @babel/core babel-loader @babel/preset-react @babel/preset-env
 ```
 
 ## Usage
@@ -27,7 +29,29 @@ First, add the plugin to your config. The plugin will automatically compile any 
 const eleventyReact = require("eleventy-plugin-react");
 
 module.exports = function (eleventyConfig) {
-  eleventyConfig.addPlugin(eleventyReact);
+  eleventyConfig.addPlugin(eleventyReact, {
+    babelConfig({ isClientBundle }) {
+      return {
+        presets: [
+          "@babel/preset-react",
+          [
+            "@babel/preset-env",
+            isClientBundle
+              ? {
+                  modules: false,
+                  targets: "> 0.25%, not dead",
+                }
+              : {
+                  modules: "commonjs",
+                  targets: {
+                    node: process.versions.node,
+                  },
+                },
+          ],
+        ],
+      };
+    },
+  });
 
   return {
     dir: {
@@ -71,33 +95,20 @@ ELEVENTY_EXPERIMENTAL=true npx @11ty/eleventy
 
 ## Options
 
-### `targets` (optional)
+### `babelConfig`
 
 ```ts
 {
-  targets?: string;
+  babelConfig: (context: { clientBundle: boolean }) => Object;
 }
 ```
 
-`targets` is what used to specify browser targets for the component hydration bundle for the client. Under the hood, it's passed to `@babel/preset-env`. Please note that you do not need to specify this if you are creating your own custom Babel configuration using the `babelConfig` option, as long as you set your own targets.
-
-### `babelConfig` (optional)
-
-```ts
-{
-  babelConfig: (context: { config: BabelConfig; isClientBundle: boolean }) =>
-    BabelConfig;
-}
-```
-
-This option is only required if you would like to customize your Babel configuration. `babelConfig` is a function that returns a Babel configuration object to be used both for compiling during server-side rendering the the static markup as well as when bundling the hydrated components for the browser. This takes the place of using a standard Babel configuration file, and the available options can be found [here](https://babeljs.io/docs/en/options).
+`babelConfig` is a function that returns a Babel configuration object to be used both for compiling during server-side rendering the the static markup as well as when bundling the hydrated components for the browser. This takes the place of using a standard Babel configuration file, and the available options can be found [here](https://babeljs.io/docs/en/options).
 
 The function is called with a `context` object that has the following signature:
 
 ```ts
 {
-  // The default Babel config.
-  config: BabelConfig;
   // When `true`, the configuration is being used to build the client bundle.
   // When `false`, it is being used to compile the code for server-side rendering.
   isClientBundle: boolean;
@@ -110,14 +121,12 @@ There are a few gotchas when configuring Babel for server-side rendering as well
 1. `targets` should be set so that the code can be executed in the version of Node.js you're using. If this doesn't match the syntax supported in the target browsers, you can use the `isClientBundle` property in the context object to configure it for both environments.
 
 ```js
-const presetEnv = require("@babel/preset-env");
-const presetReact = require("@babel/preset-react");
-
-function babelConfig({ config, isClientBundle }) {
+function babelConfig({ isClientBundle }) {
   return {
     presets: [
+      "@babel/preset-react",
       [
-        presetEnv,
+        "@babel/preset-env",
         {
           // Must be "commonjs" when not using ES Modules in Node.js.
           modules: isClientBundle ? false : "commonjs",
@@ -130,7 +139,6 @@ function babelConfig({ config, isClientBundle }) {
               },
         },
       ],
-      presetReact,
     ],
   };
 }
@@ -159,15 +167,27 @@ function babelConfig({ config, isClientBundle }) {
 ### Example usage
 
 ```js
-const myBabelPlugin = require("my-babel-plugin");
-
 eleventyConfig.addPlugin(eleventyReact, {
-  babelConfig({ config, isClientBundle }) {
-    if (isClientBundle) {
-      config.plugins.push(myBabelPlugin);
-    }
-
-    return config;
+  babelConfig({ isClientBundle }) {
+    return {
+      presets: [
+        "@babel/preset-react",
+        [
+          "@babel/preset-env",
+          isClientBundle
+            ? {
+                modules: false,
+                targets: "> 0.25%, not dead",
+              }
+            : {
+                modules: "commonjs",
+                targets: {
+                  node: process.versions.node,
+                },
+              },
+        ],
+      ],
+    };
   },
   assetsPath: "/assets/js",
   async postProcess(html) {
