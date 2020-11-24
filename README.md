@@ -8,13 +8,13 @@ A plugin that allows you to use React as a templating language for Eleventy. Thi
 ## Installation
 
 ```sh
-npm install eleventy-plugin-react @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript react react-dom react-helmet core-js@3 regenerator-runtime
+npm install eleventy-plugin-react @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript react react-dom core-js@3 regenerator-runtime
 ```
 
 or
 
 ```sh
-yarn add eleventy-plugin-react @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript react react-dom react-helmet core-js@3 regenerator-runtime
+yarn add eleventy-plugin-react @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript react react-dom core-js@3 regenerator-runtime
 ```
 
 ## Usage
@@ -55,7 +55,7 @@ export default function IndexPage(props) {
 }
 ```
 
-All the content will be rendered into the `body`. React Helmet can be used to alter the `head`.
+All the content will be rendered into the `body`. Using the `postProcess` hook with React Helmet can be used to alter the `head` (see [here](#postprocess-optional)).
 
 Data for each page is passed as props to the entrypoint page component. You can learn more about using data in Eleventy [here](https://www.11ty.dev/docs/data/).
 
@@ -158,26 +158,53 @@ function babelConfig({ config, isClientBundle }) {
 
 If `postProcess` is not defined, the following default HTML will be generated:
 
-```html
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>${data.page.title || data.site.title}</title>
-    <meta
-      name="description"
-      content="${data.page.description"
-      ||
-      data.site.description}
-    />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-  </head>
-  <body>
-    <div id="content">${renderedPageContent}</div>
-  </body>
-</html>
+```js
+function defaultPostProcess(html, data) {
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>${data.page.title || data.site.title}</title>
+        <meta name="description" content=${
+          data.page.description || data.site.description
+        } />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+      </head>
+      <body>
+        <div id="content">${html}</div>
+      </body>
+    </html>
+  `;
+}
+```
+
+To integrate `react-helmet`, you can use the following `postProcess` function in your .eleventy.js configuration:
+
+```js
+const { Helmet } = require("react-helmet");
+
+function postProcess(html, data) {
+  const helmet = Helmet.renderStatic();
+
+  return `
+    <!doctype html>
+    <html ${removeHelmetDataAttribute(helmet.htmlAttributes.toString())}>
+      <head>
+        ${removeHelmetDataAttribute(helmet.title.toString())}
+        ${removeHelmetDataAttribute(helmet.meta.toString())}
+        ${removeHelmetDataAttribute(helmet.link.toString())}
+      </head>
+      <body ${removeHelmetDataAttribute(helmet.bodyAttributes.toString())}>
+        <div id="content">
+          ${html}
+        </div>
+      </body>
+    </html>
+  `;
+}
 ```
 
 ### Example usage
