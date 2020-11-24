@@ -85,14 +85,14 @@ ELEVENTY_EXPERIMENTAL=true npx @11ty/eleventy
 
 ```ts
 {
-  babelConfig: (context: { config: BabelConfig; isClientBundle: boolean }) =>
+  babelConfig: ({ config: BabelConfig; isClientBundle: boolean }) =>
     BabelConfig;
 }
 ```
 
 This option is only required if you would like to customize your Babel configuration. `babelConfig` is a function that returns a Babel configuration object to be used both for compiling during server-side rendering the the static markup as well as when bundling the hydrated components for the browser. This takes the place of using a standard Babel configuration file, and the available options can be found [here](https://babeljs.io/docs/en/options).
 
-The function is called with a `context` object that has the following signature:
+The function is called with an object that has the following signature:
 
 ```ts
 {
@@ -150,11 +150,22 @@ function babelConfig({ config, isClientBundle }) {
 
 ```ts
 {
-  postProcess?: (html: string, data: EleventyData) => string | async (html: string, data: EleventyData) => string;
+  postProcess?: ({ html: string, data: EleventyData }) => string | async ({ html: string, data: EleventyData }) => string;
 }
 ```
 
-`postProcess` is a function (both synchronous and asynchronous functions are supported) that is called after server-side rendering has completed. The first argument is the rendered HTML for the page and the second argument is the data provided to that page by Eleventy. This hook serves as a way to transform the rendered output before it is written to disk (extracting critical styles and inserting them into the head, for instance). The string (or `Promise` resolving to a string) that is returned will be written to disk.
+`postProcess` is a function (both synchronous and asynchronous functions are supported) that is called after server-side rendering has completed. This hook serves as a way to transform the rendered output before it is written to disk (extracting critical styles and inserting them into the head, for instance). The string (or `Promise` resolving to a string) that is returned will be written to disk.
+
+The function is called with an object that has the following signature:
+
+```ts
+{
+  // The rendered HTML for the page.
+  html: string;
+  // The data provided to the page by Eleventy.
+  data: EleventyData;
+}
+```
 
 If `postProcess` is not defined, the following default HTML will be generated:
 
