@@ -7,16 +7,14 @@ A plugin that allows you to use React as a templating language for Eleventy. Thi
 
 ## Installation
 
-This plugin requires `react`, `react-dom`, `react-helmet`, `@babel/core`, `babel-loader`, `@babel/preset-react`, and `@babel/preset-env` as peer dependencies to allow you to have control over which version of these packages you're using.
-
 ```sh
-npm install eleventy-plugin-react react react-dom react-helmet @babel/core babel-loader @babel/preset-react @babel/preset-env
+npm install eleventy-plugin-react @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript react react-dom core-js@3 regenerator-runtime
 ```
 
 or
 
 ```sh
-yarn add eleventy-plugin-react react react-dom react-helmet @babel/core babel-loader @babel/preset-react @babel/preset-env
+yarn add eleventy-plugin-react @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript react react-dom core-js@3 regenerator-runtime
 ```
 
 ## Usage
@@ -29,29 +27,7 @@ First, add the plugin to your config. The plugin will automatically compile any 
 const eleventyReact = require("eleventy-plugin-react");
 
 module.exports = function (eleventyConfig) {
-  eleventyConfig.addPlugin(eleventyReact, {
-    babelConfig({ isClientBundle }) {
-      return {
-        presets: [
-          "@babel/preset-react",
-          [
-            "@babel/preset-env",
-            isClientBundle
-              ? {
-                  modules: false,
-                  targets: "> 0.25%, not dead",
-                }
-              : {
-                  modules: "commonjs",
-                  targets: {
-                    node: process.versions.node,
-                  },
-                },
-          ],
-        ],
-      };
-    },
-  });
+  eleventyConfig.addPlugin(eleventyReact);
 
   return {
     dir: {
@@ -79,7 +55,7 @@ export default function IndexPage(props) {
 }
 ```
 
-All the content will be rendered into the `body`. React Helmet can be used to alter the `head`.
+All the content will be rendered into the `body`. Using the `postProcess` hook with React Helmet can be used to alter the `head` (see [here](#postprocess-optional)).
 
 Data for each page is passed as props to the entrypoint page component. You can learn more about using data in Eleventy [here](https://www.11ty.dev/docs/data/).
 
@@ -95,20 +71,33 @@ ELEVENTY_EXPERIMENTAL=true npx @11ty/eleventy
 
 ## Options
 
-### `babelConfig`
+### `targets` (optional)
 
 ```ts
 {
-  babelConfig: (context: { clientBundle: boolean }) => Object;
+  targets?: string;
 }
 ```
 
-`babelConfig` is a function that returns a Babel configuration object to be used both for compiling during server-side rendering the the static markup as well as when bundling the hydrated components for the browser. This takes the place of using a standard Babel configuration file, and the available options can be found [here](https://babeljs.io/docs/en/options).
+`targets` is what used to specify browser targets for the component hydration bundle for the client. Under the hood, it's passed to `@babel/preset-env`. Please note that you do not need to specify this if you are creating your own custom Babel configuration using the `babelConfig` option, as long as you set your own targets.
 
-The function is called with a `context` object that has the following signature:
+### `babelConfig` (optional)
 
 ```ts
 {
+  babelConfig: ({ config: BabelConfig; isClientBundle: boolean }) =>
+    BabelConfig;
+}
+```
+
+This option is only required if you would like to customize your Babel configuration. `babelConfig` is a function that returns a Babel configuration object to be used both for compiling during server-side rendering the the static markup as well as when bundling the hydrated components for the browser. This takes the place of using a standard Babel configuration file, and the available options can be found [here](https://babeljs.io/docs/en/options).
+
+The function is called with an object that has the following signature:
+
+```ts
+{
+  // The default Babel config.
+  config: BabelConfig;
   // When `true`, the configuration is being used to build the client bundle.
   // When `false`, it is being used to compile the code for server-side rendering.
   isClientBundle: boolean;
@@ -121,12 +110,14 @@ There are a few gotchas when configuring Babel for server-side rendering as well
 1. `targets` should be set so that the code can be executed in the version of Node.js you're using. If this doesn't match the syntax supported in the target browsers, you can use the `isClientBundle` property in the context object to configure it for both environments.
 
 ```js
-function babelConfig({ isClientBundle }) {
+const presetEnv = require("@babel/preset-env");
+const presetReact = require("@babel/preset-react");
+
+function babelConfig({ config, isClientBundle }) {
   return {
     presets: [
-      "@babel/preset-react",
       [
-        "@babel/preset-env",
+        presetEnv,
         {
           // Must be "commonjs" when not using ES Modules in Node.js.
           modules: isClientBundle ? false : "commonjs",
@@ -139,6 +130,7 @@ function babelConfig({ isClientBundle }) {
               },
         },
       ],
+      presetReact,
     ],
   };
 }
@@ -158,36 +150,86 @@ function babelConfig({ isClientBundle }) {
 
 ```ts
 {
-  postProcess?: (html: string) => string | async (html: string) => string;
+  postProcess?: ({ html: string, data: EleventyData }) => string | async ({ html: string, data: EleventyData }) => string;
 }
 ```
 
 `postProcess` is a function (both synchronous and asynchronous functions are supported) that is called after server-side rendering has completed. This hook serves as a way to transform the rendered output before it is written to disk (extracting critical styles and inserting them into the head, for instance). The string (or `Promise` resolving to a string) that is returned will be written to disk.
 
+The function is called with an object that has the following signature:
+
+```ts
+{
+  // The rendered HTML for the page.
+  html: string;
+  // The data provided to the page by Eleventy.
+  data: EleventyData;
+}
+```
+
+If `postProcess` is not defined, the following default HTML will be generated:
+
+```js
+function defaultPostProcess(html, data) {
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>${data.page.title || data.site.title}</title>
+        <meta name="description" content=${
+          data.page.description || data.site.description
+        } />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+      </head>
+      <body>
+        <div id="content">${html}</div>
+      </body>
+    </html>
+  `;
+}
+```
+
+To integrate `react-helmet`, you can use the following `postProcess` function in your .eleventy.js configuration:
+
+```js
+const { Helmet } = require("react-helmet");
+
+function postProcess(html, data) {
+  const helmet = Helmet.renderStatic();
+
+  return `
+    <!doctype html>
+    <html ${removeHelmetDataAttribute(helmet.htmlAttributes.toString())}>
+      <head>
+        ${removeHelmetDataAttribute(helmet.title.toString())}
+        ${removeHelmetDataAttribute(helmet.meta.toString())}
+        ${removeHelmetDataAttribute(helmet.link.toString())}
+      </head>
+      <body ${removeHelmetDataAttribute(helmet.bodyAttributes.toString())}>
+        <div id="content">
+          ${html}
+        </div>
+      </body>
+    </html>
+  `;
+}
+```
+
 ### Example usage
 
 ```js
+const myBabelPlugin = require("my-babel-plugin");
+
 eleventyConfig.addPlugin(eleventyReact, {
-  babelConfig({ isClientBundle }) {
-    return {
-      presets: [
-        "@babel/preset-react",
-        [
-          "@babel/preset-env",
-          isClientBundle
-            ? {
-                modules: false,
-                targets: "> 0.25%, not dead",
-              }
-            : {
-                modules: "commonjs",
-                targets: {
-                  node: process.versions.node,
-                },
-              },
-        ],
-      ],
-    };
+  babelConfig({ config, isClientBundle }) {
+    if (isClientBundle) {
+      config.plugins.push(myBabelPlugin);
+    }
+
+    return config;
   },
   assetsPath: "/assets/js",
   async postProcess(html) {
