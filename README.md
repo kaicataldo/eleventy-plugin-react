@@ -150,11 +150,35 @@ function babelConfig({ config, isClientBundle }) {
 
 ```ts
 {
-  postProcess?: (html: string) => string | async (html: string) => string;
+  postProcess?: (html: string, data: EleventyData) => string | async (html: string, data: EleventyData) => string;
 }
 ```
 
-`postProcess` is a function (both synchronous and asynchronous functions are supported) that is called after server-side rendering has completed. This hook serves as a way to transform the rendered output before it is written to disk (extracting critical styles and inserting them into the head, for instance). The string (or `Promise` resolving to a string) that is returned will be written to disk.
+`postProcess` is a function (both synchronous and asynchronous functions are supported) that is called after server-side rendering has completed. The first argument is the rendered HTML for the page and the second argument is the data provided to that page by Eleventy. This hook serves as a way to transform the rendered output before it is written to disk (extracting critical styles and inserting them into the head, for instance). The string (or `Promise` resolving to a string) that is returned will be written to disk.
+
+If `postProcess` is not defined, the following default HTML will be generated:
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>${data.page.title || data.site.title}</title>
+    <meta
+      name="description"
+      content="${data.page.description"
+      ||
+      data.site.description}
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+  </head>
+  <body>
+    <div id="content">${renderedPageContent}</div>
+  </body>
+</html>
+```
 
 ### Example usage
 
