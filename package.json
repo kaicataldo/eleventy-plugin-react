@@ -51,6 +51,11 @@
     "lint-staged": "^10.2.11",
     "prettier": "^2.0.5"
   },
+  "keywords": [
+    "eleventy",
+    "eleventy-plugin",
+    "react"
+  ],
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
