@@ -79,7 +79,17 @@ ELEVENTY_EXPERIMENTAL=true npx @11ty/eleventy
 }
 ```
 
-`targets` is what used to specify browser targets for the component hydration bundle for the client. Under the hood, it's passed to `@babel/preset-env`. Please note that you do not need to specify this if you are creating your own custom Babel configuration using the `babelConfig` option, as long as you set your own targets.
+`targets` is what used to specify browser targets for the component hydration bundle for the client. Under the hood, it's passed to `@babel/preset-env`. Defaults to `"last 2 versions, safari >= 12"`. Please note that you do not need to specify this if you are creating your own custom Babel configuration using the `babelConfig` option, as long as you set your own targets.
+
+### `exts` (optional)
+
+```ts
+{
+  exts?: string[];
+}
+```
+
+`exts` allows you ot define what extensions you would like Eleventy to search for when running this plugin. Defaults to `["js", "jsx", "ts", "tsx"]`.
 
 ### `babelConfig` (optional)
 
