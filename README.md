@@ -89,7 +89,7 @@ ELEVENTY_EXPERIMENTAL=true npx @11ty/eleventy
 }
 ```
 
-`exts` allows you ot define what extensions you would like Eleventy to search for when running this plugin. Defaults to `["js", "jsx", "ts", "tsx"]`.
+`exts` allows you to define what extensions you would like Eleventy to include when running this plugin. Defaults to `["js", "jsx", "ts", "tsx"]`.
 
 ### `babelConfig` (optional)
 
