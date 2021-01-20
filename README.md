@@ -207,7 +207,7 @@ To integrate `react-helmet`, you can use the following `postProcess` function in
 ```js
 const { Helmet } = require("react-helmet");
 
-// remove helmet-specific data attributes from static HTML
+// Remove Helmet-specific data attributes from static HTML.
 function removeHelmetDataAttribute(str) {
   return str.replace(/data-react-helmet="true"/g, "").replace(/ {2,}/g, " ");
 }
