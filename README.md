@@ -180,7 +180,7 @@ The function is called with an object that has the following signature:
 If `postProcess` is not defined, the following default HTML will be generated:
 
 ```js
-function defaultPostProcess(html, data) {
+function defaultPostProcess({ html, data }) {
   return `
     <!DOCTYPE html>
     <html>
@@ -207,7 +207,12 @@ To integrate `react-helmet`, you can use the following `postProcess` function in
 ```js
 const { Helmet } = require("react-helmet");
 
-function postProcess(html, data) {
+// remove helmet-specific data attributes from static HTML
+function removeHelmetDataAttribute(str) {
+  return str.replace(/data-react-helmet="true"/g, "").replace(/ {2,}/g, " ");
+}
+
+function postProcess({ html, data }) {
   const helmet = Helmet.renderStatic();
 
   return `
