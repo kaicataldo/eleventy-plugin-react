@@ -1,5 +1,5 @@
 "use strict";
 
 module.exports = {
-  withHydration: require("./lib/withHydration"),
+  withHydration: require("./lib/components/withHydration"),
 };
