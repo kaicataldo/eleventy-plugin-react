@@ -44,6 +44,13 @@ import React from "react";
 import ParentLayout from "../layouts/ParentLayout";
 import ChildComponent from "../components/ChildComponent";
 
+// This can be a syncrhonous or asynchronous function.
+// `data` is the data provided by Eleventy for this page to allow for
+// computed values and use of functions.
+export async function pageData(data) {
+  return {};
+}
+
 // `props` is the data provided by Eleventy.
 export default function IndexPage(props) {
   return (
@@ -351,11 +358,3 @@ export default function IndexPage(props) {
   );
 }
 ```
-
-## Further improvements
-
-This was started as a proof of concept, and I would love to improve this package. Things that I think would be beneficial to explore:
-
-- Tests
-- Expose ability to modify underlying Webpack and Babel configs to allow for TypeScript, SCSS, etc.
-- Improve dev UX by using Babel/Webpack cache
