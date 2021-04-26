@@ -8,13 +8,13 @@ A plugin that allows you to use React as a templating language for Eleventy. Thi
 ## Installation
 
 ```sh
-npm install eleventy-plugin-react @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript react react-dom core-js@3 regenerator-runtime
+npm install eleventy-plugin-react @babel/core @babel/preset-env @babel/preset-react react react-dom core-js@3 regenerator-runtime
 ```
 
 or
 
 ```sh
-yarn add eleventy-plugin-react @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript react react-dom core-js@3 regenerator-runtime
+yarn add eleventy-plugin-react @babel/core @babel/preset-env @babel/preset-react react react-dom core-js@3 regenerator-runtime
 ```
 
 ## Usage
@@ -89,7 +89,7 @@ ELEVENTY_EXPERIMENTAL=true npx @11ty/eleventy
 }
 ```
 
-`exts` allows you to define what extensions you would like Eleventy to include when running this plugin. Defaults to `["js", "jsx", "ts", "tsx"]`.
+`exts` allows you to define what extensions you would like Eleventy to include when running this plugin. Defaults to `["js", "jsx"]`.
 
 ### `babelConfig` (optional)
 
@@ -351,11 +351,3 @@ export default function IndexPage(props) {
   );
 }
 ```
-
-## Further improvements
-
-This was started as a proof of concept, and I would love to improve this package. Things that I think would be beneficial to explore:
-
-- Tests
-- Expose ability to modify underlying Webpack and Babel configs to allow for TypeScript, SCSS, etc.
-- Improve dev UX by using Babel/Webpack cache
