@@ -5,6 +5,13 @@
 
 A plugin that allows you to use React as a templating language for Eleventy. This is currently experimental, and relies on unstable Eleventy APIs.
 
+## Project goals:
+
+- Combining the wonderfuly light, flexible, and performance-driven nature of Eleventy with the intuitive developer experience of a SSG React application.
+- No context-switching between JSX and other tools when thinking about markup. All content - both static and interactive - is generated with the same underlying tool.
+- Shipping as little code to the client as possible without putting the burden on the developer to figure out how to do so.
+- Performant and user-friendly (both the developer and the end user!) defaults. Additional complexity (partial hydration, etc.) is opt-in, but should still follow the same principles.
+
 ## Installation
 
 ```sh
@@ -351,3 +358,7 @@ export default function IndexPage(props) {
   );
 }
 ```
+
+## How is this different from Slinkity?
+
+[Slinkity](https://slinkity.dev/) is another great project that has some similar goals to this one. The key difference is that it integrates React components into an existing Eleventy site using shortcodes, while this project aims to mimic the experience of working in the context of a full React application. Practically speaking, the biggest difference in these two approaches is that Slinkity forces an explicit divide between React components and non-React markup, while eleventy-plugin-react allows the developer to define the boundaries of what is to be hydrated on the client at any depth in the component tree. There are certainly pros and cons to each approach, and the author hopes that developers will choose the best tool for their respective use case!
